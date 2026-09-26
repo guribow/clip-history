@@ -4,3 +4,6 @@
 "今はクリップボードに入れただけなので、⌘V で貼ってください。システム設定の「プライバシーとセキュリティ」→「アクセシビリティ」で ClipHistory をオンにすると、選ぶだけで貼れるようになります。" = "The item is on the clipboard now. Press Command-V to paste. To paste with one click, turn on ClipHistory in System Settings > Privacy & Security > Accessibility.";
 "システム設定を開く" = "Open System Settings";
 "あとで" = "Later";
+"絞り込み" = "Filter";
+"履歴はまだありません" = "No history yet";
+"見つかりません" = "No matches";
