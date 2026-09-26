@@ -17,7 +17,9 @@ The app shows English or Japanese, following your Mac's language.
 4. Open System Settings > Privacy & Security.
    Scroll down and click "Open Anyway", then enter your password.
 5. Double-click ClipHistory.app again and click "Open".
-6. Open System Settings > Privacy & Security > Accessibility and turn on ClipHistory.
+6. Open System Settings > Privacy & Security > Device Control and Data Access
+   and turn on ClipHistory. If it isn't in the list, click "+" and choose ClipHistory.app.
+   On macOS 26 or earlier, this is called "Accessibility".
    Now you can paste with one click.
 
 A clipboard icon appears in the menu bar. You're ready.
@@ -44,10 +46,10 @@ More:
 == Good to know ==
 
 - Items that password managers mark as private are not kept.
-- Without Accessibility, the item is only copied to the clipboard.
+- Without Device Control and Data Access, the item is only copied to the clipboard.
   Press Command-V to paste.
 - After you install a new version, repeat steps 3-5 of "Install".
-  Also remove ClipHistory from Accessibility with "−" and turn it on again.
+  Also remove ClipHistory from Device Control and Data Access with "−" and turn it on again.
 - Nothing is sent outside your Mac.
 
 

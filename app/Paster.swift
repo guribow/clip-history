@@ -53,8 +53,8 @@ enum Paster {
         guard !UserDefaults.standard.bool(forKey: key) else { return }
         UserDefaults.standard.set(true, forKey: key)
         let alert = NSAlert()
-        alert.messageText = L("そのまま貼るには、アクセシビリティの許可が必要です")
-        alert.informativeText = L("今はクリップボードに入れただけなので、⌘V で貼ってください。システム設定の「プライバシーとセキュリティ」→「アクセシビリティ」で ClipHistory をオンにすると、選ぶだけで貼れるようになります。")
+        alert.messageText = L("そのまま貼るには、デバイスの制御の許可が必要です")
+        alert.informativeText = L("今はクリップボードに入れただけなので、⌘V で貼ってください。システム設定の「プライバシーとセキュリティ」→「デバイスの制御とデータへのアクセス」（macOS 26 以前は「アクセシビリティ」）で ClipHistory をオンにすると、選ぶだけで貼れるようになります。")
         alert.addButton(withTitle: L("システム設定を開く"))
         alert.addButton(withTitle: L("あとで"))
         NSApp.activate(ignoringOtherApps: true)

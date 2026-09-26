@@ -70,7 +70,7 @@ final class PreferencesWindow: NSObject, NSWindowDelegate {
             [NSTextField(labelWithString: L("ショートカットキー：")), hotkeyPopup],
             [NSTextField(labelWithString: L("残す件数：")), limitPopup],
             [NSGridCell.emptyContentView, loginCheckbox],
-            [NSTextField(labelWithString: L("アクセシビリティ：")), axLabel],
+            [NSTextField(labelWithString: L("デバイスの制御：")), axLabel],
             [NSGridCell.emptyContentView, openButton],
         ])
         grid.column(at: 0).xPlacement = .trailing
