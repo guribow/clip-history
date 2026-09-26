@@ -163,6 +163,13 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         table.delegate = self
         table.target = self
         table.doubleAction = #selector(doubleClicked)
+        // 右クリックで消す（⌥⌫ でも消せることをメニューに出す）
+        let menu = NSMenu()
+        let delete = NSMenuItem(title: L("削除"), action: #selector(deleteClicked), keyEquivalent: "\u{8}")
+        delete.keyEquivalentModifierMask = .option
+        delete.target = self
+        menu.addItem(delete)
+        table.menu = menu
         table.setAccessibilityIdentifier("history")
 
         let scroll = NSScrollView()
@@ -242,8 +249,9 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
 
     @objc private func doubleClicked() { pick(row: table.clickedRow) }
 
-    private func deleteSelected() {
-        let row = table.selectedRow
+    @objc private func deleteClicked() { delete(row: table.clickedRow) }
+
+    private func delete(row: Int) {
         guard shown.indices.contains(row) else { NSSound.beep(); return }
         store.remove(id: shown[row].id)
         reload()
@@ -303,8 +311,10 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
             pick(row: table.selectedRow)
         case #selector(NSResponder.cancelOperation(_:)):
             if field.stringValue.isEmpty { close() } else { field.stringValue = ""; reload() }
-        case #selector(NSResponder.deleteBackward(_:)) where field.stringValue.isEmpty:
-            deleteSelected()
+        case #selector(NSResponder.deleteWordBackward(_:)):   // ⌥⌫（Maccy と同じ）。⌫ だけでは消さない
+            delete(row: table.selectedRow)
+        case #selector(NSResponder.deleteForward(_:)) where field.stringValue.isEmpty:   // ⌦
+            delete(row: table.selectedRow)
         default:
             return false
         }

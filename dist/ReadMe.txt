@@ -35,7 +35,7 @@ and turn on "Open at login".
 
 More:
 - Type in the list: filter text
-- Delete in the list: delete the selected item
+- Option-Delete in the list, or right-click > "Delete": delete the selected item
 - Esc: close the list
 - Icon > "Pause Recording": before you copy something private
 - Icon > "Clear History…": delete all items

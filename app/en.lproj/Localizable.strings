@@ -27,3 +27,4 @@
 "%d 件をすべて消します。元に戻せません。" = "All items (%d) will be deleted. You can't undo this.";
 "消去" = "Clear";
 "キャンセル" = "Cancel";
+"削除" = "Delete";
