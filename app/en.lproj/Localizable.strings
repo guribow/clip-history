@@ -1,1 +1,6 @@
 /* ClipHistory の英語の文字列。左が日本語（コード中のキー）、右が英語 */
+"画像 %d × %d" = "Image %d × %d";
+"そのまま貼るには、アクセシビリティの許可が必要です" = "Allow Accessibility to paste directly";
+"今はクリップボードに入れただけなので、⌘V で貼ってください。システム設定の「プライバシーとセキュリティ」→「アクセシビリティ」で ClipHistory をオンにすると、選ぶだけで貼れるようになります。" = "The item is on the clipboard now. Press Command-V to paste. To paste with one click, turn on ClipHistory in System Settings > Privacy & Security > Accessibility.";
+"システム設定を開く" = "Open System Settings";
+"あとで" = "Later";
