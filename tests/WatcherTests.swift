@@ -51,6 +51,19 @@ func watcherTests() {
 
     put([(.png, Data(count: Watcher.maxImageBytes + 1))])
     check(Watcher.read(pb) == nil, "50 MB を超える画像は読まない")
+    // 大きな写真（JPEG）は、TIFF に直した大きさではなく元の大きさで測る
+    let photo = testImage(5000, 4000)   // TIFF にすると約 80 MB、JPEG なら小さい
+    let jpeg = photo.representation(using: .jpeg, properties: [:])!
+    put([(.init("public.jpeg"), jpeg)])
+    if case .image(_, let w, let h)? = Watcher.read(pb) {
+        check(w == 5000 && h == 4000, "大きな写真（JPEG）も画像として読む")
+    } else { check(false, "大きな写真（JPEG）も画像として読む") }
+
+    put([(.string, Data(String(repeating: "a", count: Watcher.maxTextBytes + 1).utf8))])
+    check(Watcher.read(pb) == nil, "とても長いテキストは読まない")
+    put([(.string, Data(String(repeating: "a", count: Watcher.maxTextBytes).utf8))])
+    check(Watcher.read(pb) != nil, "上限ちょうどのテキストは読む")
+
     put([(.png, Data([1, 2, 3]))])
     check(Watcher.read(pb) == nil, "画像として読めないものは読まない")
 

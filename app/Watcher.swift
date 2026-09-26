@@ -4,6 +4,10 @@ import AppKit
 
 final class Watcher {
     static let maxImageBytes = 50 * 1024 * 1024
+    /// これより長いテキストは取り込まない（保存や絞り込みが重くならないように）
+    static let maxTextBytes = 1024 * 1024
+    /// 画像を読む形式（先にあるものを優先する）
+    static let imageTypes: [NSPasteboard.PasteboardType] = [.png, .init("public.jpeg"), .init("public.heic"), .tiff]
     /// 「保存しないで」の印（nspasteboard.org の決まり。パスワード管理アプリなどが付ける）
     static let skipTypes: Set<NSPasteboard.PasteboardType> = [
         .init("org.nspasteboard.ConcealedType"),
@@ -47,13 +51,14 @@ final class Watcher {
         if types.contains(where: skipTypes.contains) { return nil }
         if types.contains(.fileURL) { return nil }   // Finder でコピーしたファイルは扱わない
         if let s = pb.string(forType: .string), !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return .text(s)
+            return s.utf8.count <= maxTextBytes ? .text(s) : nil
         }
-        let isPNG = types.contains(.png)
-        guard let data = isPNG ? pb.data(forType: .png) : pb.data(forType: .tiff),
+        // 元の形式で読む。JPEG や HEIC も TIFF に直せるが、直すと何倍にも大きくなるので、大きさは元の形式で測る
+        guard let type = imageTypes.first(where: types.contains),
+              let data = pb.data(forType: type),
               data.count <= maxImageBytes,
               let rep = NSBitmapImageRep(data: data),
-              let png = isPNG ? data : rep.representation(using: .png, properties: [:])
+              let png = type == .png ? data : rep.representation(using: .png, properties: [:])
         else { return nil }
         return .image(png: png, width: rep.pixelsWide, height: rep.pixelsHigh)
     }
