@@ -26,6 +26,7 @@ func testImage(_ w: Int, _ h: Int) -> NSBitmapImageRep {
 }
 
 storeTests()
+watcherTests()
 
 print(failures == 0 ? "すべて成功" : "失敗：\(failures) 件")
 exit(failures == 0 ? 0 : 1)
