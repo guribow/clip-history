@@ -163,10 +163,10 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         table.delegate = self
         table.target = self
         table.doubleAction = #selector(doubleClicked)
-        // 右クリックで消す（⌥⌫ でも消せることをメニューに出す）
+        // 右クリックで消す（⌘⌫ でも消せることをメニューに出す）
         let menu = NSMenu()
         let delete = NSMenuItem(title: L("削除"), action: #selector(deleteClicked), keyEquivalent: "\u{8}")
-        delete.keyEquivalentModifierMask = .option
+        delete.keyEquivalentModifierMask = .command
         delete.target = self
         menu.addItem(delete)
         table.menu = menu
@@ -311,7 +311,7 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
             pick(row: table.selectedRow)
         case #selector(NSResponder.cancelOperation(_:)):
             if field.stringValue.isEmpty { close() } else { field.stringValue = ""; reload() }
-        case #selector(NSResponder.deleteWordBackward(_:)):   // ⌥⌫（Maccy と同じ）。⌫ だけでは消さない
+        case #selector(NSResponder.deleteToBeginningOfLine(_:)):   // ⌘⌫（Finder と同じ）。⌫ だけでは消さない
             delete(row: table.selectedRow)
         case #selector(NSResponder.deleteForward(_:)) where field.stringValue.isEmpty:   // ⌦
             delete(row: table.selectedRow)
