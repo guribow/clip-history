@@ -45,6 +45,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.delegate = self
         menu.autoenablesItems = false
         statusItem.menu = menu
+        Updater.shared.onChange = { [weak self] in self?.updateIcon() }
+        Updater.shared.start()
     }
 
     func applicationWillTerminate(_ notification: Notification) { store.saveNow() }
@@ -61,12 +63,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let image = NSImage(systemSymbolName: paused ? "pause.circle" : "doc.on.clipboard",
                             accessibilityDescription: paused ? L("ClipHistory（記録を一時停止中）") : "ClipHistory")
         image?.isTemplate = true
-        statusItem.button?.image = image
+        statusItem.button?.image = Updater.shared.badge(image)
     }
 
     // メニューを開くたびに作り直す
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
+        Updater.shared.topMenuItems().forEach(menu.addItem)
         let recent = store.items.prefix(10)
         if recent.isEmpty { menu.addItem(disabledItem(L("履歴はまだありません"))) }
         for item in recent {
@@ -87,6 +90,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(clear)
         menu.addItem(.separator())
         menu.addItem(MenuAction(L("設定…"), key: ",") { [weak self] in self?.preferences.show() })
+        Updater.shared.settingsMenuItems().forEach(menu.addItem)
         menu.addItem(MenuAction(L("ClipHistory について")) { [weak self] in self?.showAbout() })
         menu.addItem(NSMenuItem(title: L("終了"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
     }

@@ -24,7 +24,7 @@ Download the zip from [Releases](https://github.com/guribow/clip-history/release
 5. To paste with one click, turn on ClipHistory in System Settings > Privacy & Security > Device Control and Data Access.
    If it isn't in the list, add it with "+". On macOS 26 or earlier, this is called "Accessibility".
 
-A clipboard icon appears in the menu bar. After you install a new version, repeat steps 2-4.
+A clipboard icon appears in the menu bar. After you install a new version, remove ClipHistory from Device Control and Data Access with "−" and turn it on again. If you install it from the zip, repeat steps 2-4 first. Steps 2-4 are not needed when you use "Update" in the menu.
 Then remove ClipHistory from Device Control and Data Access with "−" and turn it on again.
 
 ## How to use
@@ -38,12 +38,14 @@ Then remove ClipHistory from Device Control and Data Access with "−" and turn 
 - **Pause:** Before you copy something private, click the menu bar icon and choose "Pause Recording".
 - The menu bar icon also shows the last 10 items.
 - In "Settings…", you can change the shortcut, the history size and "Open at login".
+- When a new version is out, a small dot appears on the menu bar icon. Choose "Update to Version …" at the top of the menu to install it and restart.
 
 ## Good to know
 
 - Items that password managers mark as private are not kept.
 - Without Device Control and Data Access, the item is only copied to the clipboard. Press Command-V to paste.
-- History is saved in `~/Library/Application Support/ClipHistory`. Nothing is sent outside your Mac.
+- History is saved in `~/Library/Application Support/ClipHistory`. It is never sent outside your Mac.
+- Once a day, the app asks GitHub for the latest version. You can turn this off with "Check for Updates Automatically" in the menu. The app sends no other data.
 
 ## Uninstall
 

@@ -41,6 +41,8 @@ More:
 - Icon > "Clear History…": delete all items
 - Icon > "Settings…": shortcut, history size, open at login
 - To see the version, click the icon > "About ClipHistory"
+- When a new version is out, a small dot appears on the icon.
+  Choose "Update to Version …" at the top of the menu to install it.
 
 
 == Good to know ==
@@ -48,9 +50,13 @@ More:
 - Items that password managers mark as private are not kept.
 - Without Device Control and Data Access, the item is only copied to the clipboard.
   Press Command-V to paste.
-- After you install a new version, repeat steps 3-5 of "Install".
-  Also remove ClipHistory from Device Control and Data Access with "−" and turn it on again.
-- Nothing is sent outside your Mac.
+- After you install a new version, remove ClipHistory from
+  Device Control and Data Access with "−" and turn it on again.
+  If you install it from the zip, also repeat steps 3-5 of "Install".
+  Steps 3-5 are not needed when you use "Update" in the menu.
+- Your history is never sent outside your Mac.
+- Once a day, the app asks GitHub for the latest version.
+  You can turn this off with "Check for Updates Automatically" in the menu.
 
 
 == Uninstall ==

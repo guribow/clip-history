@@ -29,5 +29,9 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2026 guribow</string>
+	<key>UpdateNote</key>
+	<string>アップデートのあと、システム設定の「プライバシーとセキュリティ」→「デバイスの制御とデータへのアクセス」で ClipHistory を「−」でいったん外し、もう一度オンにしてください。</string>
+	<key>UpdateRepo</key>
+	<string>guribow/clip-history</string>
 </dict>
 </plist>
