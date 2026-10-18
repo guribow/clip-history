@@ -35,6 +35,7 @@ and turn on "Open at login".
 
 More:
 - Type in the list: filter text
+- Point to an item, or right-click it: see the full text or a larger image
 - Command-Delete in the list, or right-click > "Delete": delete the selected item
 - Esc: close the list
 - Icon > "Pause Recording": before you copy something private

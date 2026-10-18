@@ -25,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var panel: PanelController!
     private var hotkey: Hotkey!
     private var hotkeyOK = true
+    private let preview = PreviewWindow()
     private lazy var preferences = PreferencesWindow(
         onHotkeyChange: { [weak self] in self?.applyHotkey() },
         onLimitChange: { [weak self] in self?.store.limit = Settings.limit })
@@ -75,6 +76,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         for item in recent {
             let mi = MenuAction(summary(item, max: 40)) { [weak self] in self?.paste(item) }
             if item.kind == .image { mi.image = NSImage(systemSymbolName: "photo", accessibilityDescription: nil) }
+            mi.representedObject = item.id   // カーソルが乗ったときに中身を出すため
             menu.addItem(mi)
         }
         menu.addItem(.separator())
@@ -94,6 +96,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(MenuAction(L("ClipHistory について")) { [weak self] in self?.showAbout() })
         menu.addItem(NSMenuItem(title: L("終了"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
     }
+
+    /// 履歴の項目にカーソルが乗ったら、メニューの横に中身を出す（項目に収まっている短い文は出さない）
+    func menu(_ menu: NSMenu, willHighlight item: NSMenuItem?) {
+        guard let id = item?.representedObject as? UUID,
+              let clip = store.items.first(where: { $0.id == id }),
+              clip.kind == .image || fullText(clip) != summary(clip, max: 40),
+              let menuWindow = NSApp.windows.first(where: { $0.isVisible && $0.className.contains("Menu") })
+        else { preview.hide(); return }
+        // 項目の位置はわからないので、マウスの高さ（キーで選んだときはメニューの上端）にそろえる
+        let mouse = NSEvent.mouseLocation
+        let top = NSMouseInRect(mouse, menuWindow.frame, false) ? mouse.y + 12 : menuWindow.frame.maxY
+        preview.show(clip, store: store, anchor: NSRect(x: mouse.x, y: top, width: 0, height: 0), beside: menuWindow.frame)
+    }
+
+    func menuDidClose(_ menu: NSMenu) { preview.hide() }
 
     private func disabledItem(_ title: String) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")

@@ -4,6 +4,12 @@ import Foundation
 /// 画面に出す文字列。日本語をキーにし、英語は en.lproj/Localizable.strings で訳す（Mac の言語設定で自動で切り替わる）
 func L(_ ja: String) -> String { NSLocalizedString(ja, comment: "") }
 
+/// 中身を大きめに見せるときの文（前後の空白を除き、長すぎるものは切る）
+func fullText(_ item: ClipItem, max: Int = 3000) -> String {
+    let text = (item.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+    return text.count > max ? String(text.prefix(max)) + "…" : text
+}
+
 /// 一覧やメニューに出す 1 行（テキストは空でない最初の行、画像は大きさ）
 func summary(_ item: ClipItem, max: Int = 60) -> String {
     switch item.kind {

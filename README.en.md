@@ -33,6 +33,8 @@ Then remove ClipHistory from Device Control and Data Access with "−" and turn 
 - **Paste:** Press Shift-Command-V, choose with the arrow keys and press Return.
   You can also double-click, or press Command-1 to Command-9.
 - **Find:** Type in the list to filter text.
+- **View:** Point to an item in the list, or right-click it, to see the full text or a larger image.
+  This also works for the items in the menu bar menu.
 - **Delete:** Select an item and press Command-Delete, or right-click it and choose "Delete".
   To delete all, click the menu bar icon and choose "Clear History…".
 - **Pause:** Before you copy something private, click the menu bar icon and choose "Pause Recording".

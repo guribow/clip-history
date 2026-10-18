@@ -23,6 +23,32 @@ private final class EmphasizedRowView: NSTableRowView {
     override var isEmphasized: Bool { get { true } set {} }
 }
 
+/// マウスの下の行を知らせる（スクロールで行が入れ替わったときも）。-1 は行の外
+private final class HoverTable: NSTableView {
+    var onHover: ((Int) -> Void)?
+    private var hoverArea: NSTrackingArea?
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let hoverArea { removeTrackingArea(hoverArea) }
+        let area = NSTrackingArea(rect: .zero, options: [.mouseMoved, .mouseEnteredAndExited, .activeAlways, .inVisibleRect],
+                                  owner: self, userInfo: nil)
+        addTrackingArea(area)
+        hoverArea = area
+    }
+
+    override func mouseMoved(with event: NSEvent) { super.mouseMoved(with: event); report() }
+    override func mouseEntered(with event: NSEvent) { super.mouseEntered(with: event); report() }
+    override func mouseExited(with event: NSEvent) { super.mouseExited(with: event); onHover?(-1) }
+    override func scrollWheel(with event: NSEvent) { super.scrollWheel(with: event); report() }
+
+    private func report() {
+        guard let window else { return }
+        let p = convert(window.mouseLocationOutsideOfEventStream, from: nil)
+        onHover?(visibleRect.contains(p) ? row(at: p) : -1)
+    }
+}
+
 /// 1 行：コピー元のアプリのアイコン、縮小画像、中身、時間、⌘数字
 private final class RowView: NSTableCellView {
     static let id = NSUserInterfaceItemIdentifier("row")
@@ -66,7 +92,7 @@ private final class RowView: NSTableCellView {
     required init?(coder: NSCoder) { fatalError() }
 }
 
-final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate, NSWindowDelegate {
+final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate, NSWindowDelegate, NSMenuDelegate {
     static let width: CGFloat = 440
     static let rowHeight: CGFloat = 36
     static let visibleRows = 9
@@ -75,11 +101,14 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
     private let onPick: (ClipItem) -> Void
     private let panel: KeyPanel
     private let field = NSTextField()
-    private let table = NSTableView()
+    private let table = HoverTable()
     private let emptyLabel = NSTextField(labelWithString: "")
     private var shown: [ClipItem] = []
     private var thumbs: [UUID: NSImage] = [:]
     private var appIcons: [String: NSImage] = [:]
+    private let preview = PreviewWindow()
+    private var hoverRow = -1
+    private var hoverTimer: Timer?
     private let timeFormatter: RelativeDateTimeFormatter = {
         let f = RelativeDateTimeFormatter()
         f.unitsStyle = .short
@@ -121,7 +150,10 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         panel.makeFirstResponder(field)
     }
 
-    func close() { panel.orderOut(nil) }
+    func close() {
+        hidePreview()
+        panel.orderOut(nil)
+    }
 
     /// ほかの場所をクリックしたら閉じる
     func windowDidResignKey(_ notification: Notification) { close() }
@@ -163,12 +195,10 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         table.delegate = self
         table.target = self
         table.doubleAction = #selector(doubleClicked)
-        // 右クリックで消す（⌘⌫ でも消せることをメニューに出す）
+        table.onHover = { [weak self] row in self?.hover(row) }
+        // 右クリックで中身を大きめに見せ、消せるようにする（中身は開くたびに作る）
         let menu = NSMenu()
-        let delete = NSMenuItem(title: L("削除"), action: #selector(deleteClicked), keyEquivalent: "\u{8}")
-        delete.keyEquivalentModifierMask = .command
-        delete.target = self
-        menu.addItem(delete)
+        menu.delegate = self
         table.menu = menu
         table.setAccessibilityIdentifier("history")
 
@@ -220,6 +250,7 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
     // MARK: - 一覧
 
     private func reload(keepSelection: Bool = false) {
+        hidePreview()   // 行が入れ替わるので、出している中身は消す
         let row = table.selectedRow
         let selectedID = keepSelection && shown.indices.contains(row) ? shown[row].id : nil
         let q = field.stringValue.trimmingCharacters(in: .whitespaces)
@@ -256,6 +287,51 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         store.remove(id: shown[row].id)
         reload()
         select(min(row, shown.count - 1))   // 消した行の位置に留まる
+    }
+
+    // MARK: - 中身を大きめに見せる
+
+    /// 同じ行に少し置いたら出す。一度出たら、ほかの行へ移るとすぐ切り替える
+    private func hover(_ row: Int) {
+        guard row != hoverRow else { return }
+        hoverRow = row
+        hoverTimer?.invalidate()
+        guard shown.indices.contains(row) else { preview.hide(); return }
+        if preview.isVisible {
+            showPreview()
+        } else {
+            hoverTimer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false) { [weak self] _ in self?.showPreview() }
+        }
+    }
+
+    private func showPreview() {
+        guard panel.isVisible, shown.indices.contains(hoverRow) else { return }
+        let rect = panel.convertToScreen(table.convert(table.rect(ofRow: hoverRow), to: nil))
+        preview.show(shown[hoverRow], store: store, anchor: rect, beside: panel.frame)
+    }
+
+    private func hidePreview() {
+        hoverTimer?.invalidate()
+        hoverRow = -1
+        preview.hide()
+    }
+
+    /// 右クリックのメニュー：一番上に中身、その下に削除（⌘⌫ でも消せることを出す）
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        hidePreview()
+        menu.removeAllItems()
+        let row = table.clickedRow
+        guard shown.indices.contains(row) else { return }
+        if let content = Preview.content(shown[row], store: store) {
+            let item = NSMenuItem()
+            item.view = content
+            menu.addItem(item)
+            menu.addItem(.separator())
+        }
+        let delete = NSMenuItem(title: L("削除"), action: #selector(deleteClicked), keyEquivalent: "\u{8}")
+        delete.keyEquivalentModifierMask = .command
+        delete.target = self
+        menu.addItem(delete)
     }
 
     func numberOfRows(in tableView: NSTableView) -> Int { shown.count }
