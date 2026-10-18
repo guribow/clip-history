@@ -45,7 +45,7 @@ More:
   Choose "Update to Version …" at the top of the menu to install it.
 
 
-== Good to know ==
+== About history and data ==
 
 - Items that password managers mark as private are not kept.
 - Without Device Control and Data Access, the item is only copied to the clipboard.

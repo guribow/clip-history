@@ -40,7 +40,7 @@ Then remove ClipHistory from Device Control and Data Access with "−" and turn 
 - In "Settings…", you can change the shortcut, the history size and "Open at login".
 - When a new version is out, a small dot appears on the menu bar icon. Choose "Update to Version …" at the top of the menu to install it and restart.
 
-## Good to know
+## About history and data
 
 - Items that password managers mark as private are not kept.
 - Without Device Control and Data Access, the item is only copied to the clipboard. Press Command-V to paste.
