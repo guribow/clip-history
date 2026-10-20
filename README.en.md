@@ -65,6 +65,10 @@ Requires Xcode (swiftc).
 ./test.sh    # run the tests
 ```
 
+## Questions and Problems
+
+Please use [GitHub Issues](https://github.com/guribow/clip-history/issues).
+
 ## License
 
 MIT License ([LICENSE](LICENSE)). No warranty.

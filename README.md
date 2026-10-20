@@ -56,6 +56,10 @@ Xcode（swiftc）が必要です。
 ./test.sh    # 中身のしくみを確かめる
 ```
 
+## 質問・不具合
+
+質問や不具合は、[GitHub の Issues](https://github.com/guribow/clip-history/issues) にお寄せください。
+
 ## ライセンス
 
 MIT ライセンスです（[LICENSE](LICENSE)）。無保証です。
